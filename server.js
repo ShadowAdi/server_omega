@@ -9,13 +9,10 @@ const { router } = require("./routes/route");
 const app = express();
 const httpServer = http.createServer(app);
 
-const SOCKET_PORT = process.env.SOCKET_PORT || 9000;
-const APP_PORT = process.env.PORT || 3000;
-
-
+const PORT = process.env.PORT || 3000;
 
 const io = new Server(httpServer, {
-    cors: { origin: "http://localhost:5173", methods: ["GET", "POST"] },
+    cors: { origin: "*", methods: ["GET", "POST"] },
 });
 
 io.on("connection", (socket) => {
@@ -35,9 +32,6 @@ io.on("connection", (socket) => {
     });
 });
 
-
-
-
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -45,10 +39,7 @@ app.use("/api", router);
 
 ConnectDB();
 
-httpServer.listen(SOCKET_PORT, () => {
-    console.log(`Chat started on port ${SOCKET_PORT}`);
-});
-
-app.listen(APP_PORT, () => {
-    console.log(`App started on port ${APP_PORT}`);
+// Listen on the same PORT for both HTTP and WebSocket
+httpServer.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}`);
 });
